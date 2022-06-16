@@ -1,0 +1,1 @@
+const base = `https://fbprj2-c394f-default-rtdb.firebaseio.com`

@@ -5,5 +5,3 @@ select
 datalist
 file
 range
-color
-number

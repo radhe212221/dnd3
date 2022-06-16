@@ -1,7 +1,8 @@
 import axios from 'axios'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 const url = `https://fbprj2-c394f-default-rtdb.firebaseio.com/form.json`
 export default function App() {
+    const [id, setid] = useState('')
     const [state, setState] = useState({
         gender: "male",
         skills: [],
@@ -15,6 +16,14 @@ export default function App() {
             .then(res => console.log(res.data))
             .catch(err => console.log(`err: ${err}`))
     }
+    
+    const handleUpdate = () => {
+        const url2 = `https://fbprj2-c394f-default-rtdb.firebaseio.com/form/${id}.json`
+        axios.patch(url2, state)
+            .then(res => console.log(res.data))
+            .catch(err => console.log(`err: ${err}`))
+    }
+
     const handleChange = e => {
         let { name, value } = e.target
         if (name === "gender" || name === "degree" || name === "board" || name === "age") {
@@ -46,6 +55,19 @@ export default function App() {
     const checkinstate = val => {
         return state?.skills?.some(x => x === val)
     }
+    const boot = () => {
+        let resp = (window?.location?.search?.split("?s=").filter(x => x).toString())
+        if (resp) {
+            setid(resp)
+            const url2 = `https://fbprj2-c394f-default-rtdb.firebaseio.com/form/${resp}.json`
+            // console.log(url2)
+            axios.get(url2)
+                .then(res => setState(res.data))
+                .catch(err => console.log(`err :: ${err}`))
+        }
+
+    }
+    useEffect(boot, [])
     return (
         <div>
             <h1>form</h1>
@@ -87,7 +109,8 @@ export default function App() {
             <input name='age' type="range" min="15" max={50} value={state?.age} onChange={handleChange} />
             <mark>{state?.age}</mark>
             <p>click to submit</p>
-            <button onClick={handleSubmit}>submit</button>
+            {!id&&<button onClick={handleSubmit}>submit</button>}
+            {id&&<button onClick={handleUpdate}>update</button>}
         </div>
     )
 }
